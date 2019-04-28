@@ -10,7 +10,7 @@ class influxdb:
         self.influxdb_ip=influxdb_ip
         self.influxdb_port=influxdb_port
         self.influxdb_name=influxdb_name
-        self.auth = base64.b64encode("{}:{}".format(influxdb_user,influxdb_password).encode())
+        self.auth = base64.b64encode("{}:{}".format(influxdb_user,influxdb_password).encode()).decode('utf-8')
         self.measure_name=measure_name
         self.queue = []
 
@@ -30,6 +30,7 @@ class influxdb:
            'Content-Type': 'application/x-www-form-urlencode',
            'Authorization': 'Basic {}'.format(self.auth)
         }
+        print(headers)
         data='\n'.join(self.queue)
         try:
             response = requests.post('http://%s:%s/write?db=%s'%(self.influxdb_ip,self.influxdb_port,self.influxdb_name), headers=headers, data=data)

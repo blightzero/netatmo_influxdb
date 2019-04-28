@@ -7,8 +7,8 @@ import yaml
 from influxdb import influxdb
 from netatmo import netatmo
 
-def request_nodes(sc):
-    logging.info('Requesting and adding...')
+def request_nodes(sc,interval):
+    logging.debug('Requesting and adding...')
     for node in myconfig['netatmo']['nodes']:
         if(node.get('rain_module_id',None)):
             rain = mynetatmo.getmeasure_current(node.get('device_id'),node.get('rain_module_id'),'Rain')
@@ -24,7 +24,7 @@ def request_nodes(sc):
             myinfluxdb.add_measure({'mac':node.get('device_id')},"pressure","{:.1f}".format(pressure[0]))
     
     myinfluxdb.write_influxdb()
-    myscheduler.enter(30,1,request_nodes, (sc,))
+    myscheduler.enter(interval,1,request_nodes, (sc,interval))
 
 
 def read_config(configfile):
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     else:
         loglevel = logging.INFO
     myconfig = read_config(args.config)
-    
+
     logging.basicConfig(filename=myconfig['logfile'], level=loglevel)
 
     myinfluxdb = influxdb(myconfig['influxdb']['host'],
@@ -59,9 +59,9 @@ if __name__ == "__main__":
     mynetatmo = netatmo(myconfig['netatmo']['authtoken'])
     
     logging.info('Started netatmo weather collection')
-    print("Started netatmo collection!")
+    print("Started netatmo weather collection!")
     myscheduler = sched.scheduler(time.time,time.sleep)
-    myscheduler.enter(1,1,request_nodes,(myscheduler,))
+    myscheduler.enter(1,1,request_nodes,(myscheduler,myconfig['interval']))
     myscheduler.run()
 
 
