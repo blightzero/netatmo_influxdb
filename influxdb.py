@@ -30,7 +30,6 @@ class influxdb:
            'Content-Type': 'application/x-www-form-urlencode',
            'Authorization': 'Basic {}'.format(self.auth)
         }
-        print(headers)
         data='\n'.join(self.queue)
         try:
             response = requests.post('http://%s:%s/write?db=%s'%(self.influxdb_ip,self.influxdb_port,self.influxdb_name), headers=headers, data=data)
