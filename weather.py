@@ -39,7 +39,7 @@ def read_config(configfile):
 if __name__ == "__main__":
     # Execute API requests
     parser = argparse.ArgumentParser()
-    parser.add_argument("--debug", help="Enable Debug Logging")
+    parser.add_argument("--debug", default=False, action='store_true', help="Enable Debug Logging")
     parser.add_argument('--config', type=str, default='config.yml', help='Specify the location of the config file. Defaults to config.yml.')
     args = parser.parse_args()
     if(args.debug):
@@ -59,6 +59,7 @@ if __name__ == "__main__":
     mynetatmo = netatmo(myconfig['netatmo']['authtoken'])
     
     logging.info('Started netatmo weather collection')
+    logging.debug('Started in debug mode.')
     print("Started netatmo weather collection!")
     myscheduler = sched.scheduler(time.time,time.sleep)
     myscheduler.enter(1,1,request_nodes,(myscheduler,myconfig['interval']))

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import time
 import json
-import requests
 import logging
+import requests
 
 
 class netatmo:
@@ -33,7 +33,7 @@ class netatmo:
                 logging.warning('Invalid HTTP status code from API')
                 return None
         except Exception as error:
-            logging.warning('HTTP error:', error)
+            logging.warning('HTTP error: {}'.format(error))
             return None
         
         if not (response.json):
@@ -45,7 +45,7 @@ class netatmo:
             if not (len(body_list)):
                 return None
         except Exception as error:
-            logging.warning('body element not found in JSON:', error)
+            logging.warning('body element not found in JSON: {}'.format(error))
         
         try:
             values = body_list[-1].get("value")
@@ -59,6 +59,6 @@ class netatmo:
             value = list(map(lambda x: float(x)/float(len(values)),value))
             return value
         except Exception as error:
-            logging.warning('Unexpected value error:', error)
+            logging.warning('Unexpected value error: {}'.format(error))
 
 
