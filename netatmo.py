@@ -6,12 +6,21 @@ import requests
 
 
 class netatmo:
+    """
+    Simple abstraction of the netatmo REST API
+    """
 
     def __init__(self, authtoken):
+        """
+        Create netatmo REST API abstraction with authtoken
+        """
         self.authtoken = authtoken
 
 
     def getmeasure_current(self, device_id, module_id, measure, scale='max'):
+        """
+        Get specific measurement from specific device module.
+        """
         current_time = int(time.time())
         headers = {
             'Content-Type': 'application/json;charset=utf-8',
