@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 import time
 import json
 import logging
@@ -15,6 +16,24 @@ class netatmo:
         Create netatmo REST API abstraction with authtoken
         """
         self.authtoken = authtoken
+
+    def update_authtoken(self):
+        headers = {
+            'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64; rv:82.0) Gecko/20100101 Firefox/82.0'
+        }
+        response = requests.get('https://weathermap.netatmo.com/', headers=headers)
+        if not response.text:
+            return False
+        tokens = re.findall(r'accessToken: "(.*)"', response.text)
+        if(len(tokens) == 0):
+            logging.warning("Could not find token in response.")
+            return False
+        for token in tokens:
+            if(token == self.authtoken):
+                logging.debug("Token is still uptodate. Not updating")
+                return True
+            logging.info("Updating accessToken.")
+            self.authtoken = token
 
 
     def getmeasure_current(self, device_id, module_id, measure, scale='max'):

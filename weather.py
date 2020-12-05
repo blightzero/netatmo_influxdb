@@ -27,6 +27,13 @@ def request_nodes(sc,interval):
     myscheduler.enter(interval,1,request_nodes, (sc,interval))
 
 
+def request_token(interval):
+    mynetatmo.update_authtoken()
+    myscheduler.enter(interval,1,request_token, (interval,))
+
+
+
+
 def read_config(configfile):
     try:
         with open(configfile, 'r') as ymlfile:
@@ -63,6 +70,7 @@ if __name__ == "__main__":
     print("Started netatmo weather collection!")
     myscheduler = sched.scheduler(time.time,time.sleep)
     myscheduler.enter(1,1,request_nodes,(myscheduler,myconfig['interval']))
+    myscheduler.enter(2,1,request_token,(3600,))
     myscheduler.run()
 
 
